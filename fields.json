@@ -1,0 +1,41 @@
+{
+  "leads": [
+    { "key": "name",          "label": "Full Name",        "type": "text",   "required": true,  "group": "core" },
+    { "key": "email",         "label": "Email Address",    "type": "email",  "required": false, "group": "core" },
+    { "key": "source",        "label": "Lead Source",      "type": "select", "required": false, "group": "core",
+      "options": ["gmail", "whatsapp", "manual", "referral"] },
+    { "key": "status",        "label": "Status",           "type": "select", "required": false, "group": "core",
+      "options": ["New", "Qualified", "Proposal Sent", "Closed"] },
+    { "key": "instagram",     "label": "Instagram Handle", "type": "text",   "required": false, "group": "social" },
+    { "key": "linkedin",      "label": "LinkedIn URL",     "type": "url",    "required": false, "group": "social" },
+    { "key": "monthly_budget","label": "Monthly Budget ($)","type": "number","required": false, "group": "financial" },
+    { "key": "industry",      "label": "Industry",         "type": "text",   "required": false, "group": "details" }
+  ],
+  "projects": [
+    { "key": "client_name",   "label": "Client Name",      "type": "text",   "required": true,  "group": "core" },
+    { "key": "project_name",  "label": "Project Name",     "type": "text",   "required": true,  "group": "core" },
+    { "key": "status",        "label": "Status",           "type": "select", "required": false, "group": "core",
+      "options": ["Pending", "Active", "On Hold", "Completed"] },
+    { "key": "assigned_to",   "label": "Assigned To",      "type": "text",   "required": false, "group": "core" },
+    { "key": "budget",        "label": "Budget ($)",       "type": "number", "required": false, "group": "financial" },
+    { "key": "start_date",    "label": "Start Date",       "type": "date",   "required": false, "group": "core" },
+    { "key": "deliverables",  "label": "Deliverables",     "type": "text",   "required": false, "group": "details" }
+  ],
+  "employees": [
+    { "key": "name",          "label": "Full Name",        "type": "text",   "required": true,  "group": "core" },
+    { "key": "role",          "label": "Role",             "type": "text",   "required": false, "group": "core" },
+    { "key": "email",         "label": "Email",            "type": "email",  "required": false, "group": "core" },
+    { "key": "hourly_rate",   "label": "Hourly Rate ($)",  "type": "number", "required": false, "group": "financial" },
+    { "key": "current_load",  "label": "Capacity Used (%)", "type": "number","required": false, "group": "core" },
+    { "key": "skills",        "label": "Key Skills",       "type": "text",   "required": false, "group": "details" },
+    { "key": "slack_handle",  "label": "Slack Handle",     "type": "text",   "required": false, "group": "social" }
+  ],
+  "finances": [
+    { "key": "client_name",   "label": "Client Name",      "type": "text",   "required": false, "group": "core" },
+    { "key": "type",          "label": "Type",             "type": "select", "required": true,  "group": "core",
+      "options": ["revenue", "ad_spend", "payroll", "tool", "other"] },
+    { "key": "amount",        "label": "Amount ($)",       "type": "number", "required": true,  "group": "core" },
+    { "key": "description",   "label": "Description",      "type": "text",   "required": false, "group": "core" },
+    { "key": "date",          "label": "Date",             "type": "date",   "required": false, "group": "core" }
+  ]
+}
