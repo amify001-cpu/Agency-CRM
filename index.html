@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apex CRM — Digital Agency</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink:    #0d0f14;
+      --ink2:   #1c2030;
+      --ink3:   #2a2f42;
+      --muted:  #8891a8;
+      --border: #2a2f42;
+      --accent: #6c63ff;
+      --accent2:#00d4aa;
+      --warn:   #f59e0b;
+      --danger: #ef4444;
+      --surface:#161b28;
+      --surface2:#1e2536;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ink);
+      color: #e2e8f0;
+      margin: 0;
+    }
+    h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+    .sidebar { background: var(--surface); border-right: 1px solid var(--border); }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:8px; cursor:pointer; transition:all .15s; color:var(--muted); font-size:14px; font-weight:500; }
+    .nav-item:hover { background:var(--ink3); color:#e2e8f0; }
+    .nav-item.active { background: linear-gradient(135deg,#6c63ff22,#00d4aa11); color:#fff; border:1px solid #6c63ff44; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+    .card2 { background:var(--surface2); border:1px solid var(--border); border-radius:10px; }
+    .stat-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:20px; }
+    .badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:.4px; }
+    .badge-active    { background:#00d4aa18; color:#00d4aa; border:1px solid #00d4aa44; }
+    .badge-pending   { background:#f59e0b18; color:#f59e0b; border:1px solid #f59e0b44; }
+    .badge-completed { background:#6c63ff18; color:#a78bfa; border:1px solid #6c63ff44; }
+    .badge-new       { background:#3b82f618; color:#60a5fa; border:1px solid #3b82f644; }
+    .badge-qualified { background:#10b98118; color:#34d399; border:1px solid #10b98144; }
+    .badge-closed    { background:#6b728018; color:#9ca3af; border:1px solid #6b728044; }
+    .badge-revenue   { background:#00d4aa18; color:#00d4aa; }
+    .badge-ad_spend  { background:#ef444418; color:#f87171; }
+    .badge-payroll   { background:#f59e0b18; color:#fbbf24; }
+    .badge-tool      { background:#8b5cf618; color:#a78bfa; }
+    .btn-primary { background:var(--accent); color:#fff; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:opacity .15s; }
+    .btn-primary:hover { opacity:.85; }
+    .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); border-radius:8px; padding:8px 16px; font-size:13px; cursor:pointer; transition:all .15s; }
+    .btn-ghost:hover { background:var(--ink3); color:#e2e8f0; }
+    input, select, textarea {
+      background:var(--ink3); border:1px solid var(--border); color:#e2e8f0;
+      border-radius:8px; padding:9px 12px; font-size:13px; width:100%; font-family:inherit;
+      outline:none; transition:border-color .15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color:var(--accent); }
+    select option { background:var(--ink3); }
+    label { font-size:12px; color:var(--muted); font-weight:500; margin-bottom:4px; display:block; }
+    .table-row { display:grid; border-bottom:1px solid var(--border); }
+    .table-row:last-child { border:none; }
+    .table-header { font-size:11px; color:var(--muted); font-weight:600; letter-spacing:.6px; text-transform:uppercase; }
+    .progress-bar { background:var(--ink3); border-radius:99px; overflow:hidden; }
+    .progress-fill { height:100%; border-radius:99px; transition:width .6s ease; }
+    .msg-item { padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .1s; }
+    .msg-item:hover { background:var(--ink3); }
+    .msg-item.unread { border-left:3px solid var(--accent); }
+    .tab { padding:8px 16px; border-radius:7px; font-size:13px; font-weight:500; cursor:pointer; color:var(--muted); transition:all .15s; }
+    .tab.active { background:var(--ink3); color:#fff; }
+    .modal-backdrop { position:fixed; inset:0; background:#00000088; z-index:50; display:none; align-items:center; justify-content:center; }
+    .modal-backdrop.open { display:flex; }
+    .modal { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:28px; max-width:520px; width:90%; max-height:85vh; overflow-y:auto; }
+    .page { display:none; }
+    .page.active { display:block; }
+    .toggle { position:relative; width:44px; height:24px; cursor:pointer; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background:var(--ink3); border-radius:99px; transition:.3s; border:1px solid var(--border); }
+    .toggle-slider:before { content:''; position:absolute; width:18px; height:18px; left:2px; top:2px; background:var(--muted); border-radius:50%; transition:.3s; }
+    .toggle input:checked + .toggle-slider { background:var(--accent); border-color:var(--accent); }
+    .toggle input:checked + .toggle-slider:before { transform:translateX(20px); background:#fff; }
+    .notification { position:fixed; top:20px; right:20px; z-index:100; background:var(--surface2); border:1px solid var(--accent); border-radius:10px; padding:14px 18px; font-size:13px; box-shadow:0 8px 32px #0006; transform:translateY(-10px); opacity:0; transition:all .3s; }
+    .notification.show { transform:translateY(0); opacity:1; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--ink3); border-radius:99px; }
+    .logo-mark { width:34px; height:34px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:9px; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:15px; color:#fff; }
+    .capacity-high   { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .capacity-medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .capacity-low    { background: linear-gradient(90deg, #00d4aa, #34d399); }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    .animate-in { animation: fadeIn .25s ease forwards; }
+  </style>
+</head>
+<body class="h-full flex">
+
+<!-- ═══════════════════════════════════════════ SIDEBAR ══ -->
+<aside class="sidebar w-60 flex-shrink-0 flex flex-col h-screen sticky top-0 p-4 gap-1">
+  <div class="flex items-center gap-3 px-2 mb-6 mt-1">
+    <div class="logo-mark">A</div>
+    <div>
+      <div class="text-sm font-bold text-white" style="font-family:Syne,sans-serif">Apex CRM</div>
+      <div class="text-xs" style="color:var(--muted)">Digital Agency</div>
+    </div>
+  </div>
+
+  <div class="text-xs font-semibold px-3 mb-1" style="color:var(--muted);letter-spacing:.7px">WORKSPACE</div>
+  <div class="nav-item active" data-page="dashboard">
+    <span>⬡</span> Dashboard
+  </div>
+  <div class="nav-item" data-page="comms">
+    <span>💬</span> Comm Hub
+    <span id="unread-badge" class="ml-auto text-xs px-1.5 py-0.5 rounded-full hidden" style="background:var(--accent);color:#fff"></span>
+  </div>
+  <div class="nav-item" data-page="projects">
+    <span>📋</span> Projects
+  </div>
+  <div class="nav-item" data-page="leads">
+    <span>🎯</span> Leads
+  </div>
+
+  <div class="text-xs font-semibold px-3 mt-4 mb-1" style="color:var(--muted);letter-spacing:.7px">OPERATIONS</div>
+  <div class="nav-item" data-page="employees">
+    <span>👥</span> Team Directory
+  </div>
+  <div class="nav-item" data-page="finances">
+    <span>💰</span> Finance Ledger
+  </div>
+
+  <div class="mt-auto"></div>
+  <div class="nav-item" data-page="settings">
+    <span>⚙️</span> Settings
+  </div>
+  <div class="px-3 py-2 text-xs" style="color:var(--muted)">v1.0 · April 2026</div>
+</aside>
+
+<!-- ═══════════════════════════════════════════ MAIN ══ -->
+<main class="flex-1 overflow-y-auto p-6 gap-6 flex flex-col" style="background:var(--ink)">
+
+  <!-- ──── DASHBOARD PAGE ──── -->
+  <div id="page-dashboard" class="page active animate-in">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Dashboard</h1>
+        <div class="text-sm mt-0.5" style="color:var(--muted)">Welcome back — here's what's happening today.</div>
+      </div>
+      <div class="text-sm px-3 py-1.5 rounded-lg" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted)">📅 April 13, 2026</div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 gap-4 mb-6" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card">
+        <div class="text-xs mb-2" style="color:var(--muted);letter-spacing:.5px">NET PROFIT</div>
+        <div id="kpi-profit" class="text-2xl font-bold" style="color:var(--accent2)">—</div>
+        <div class="text-xs mt-1" style="color:var(--muted)">This month</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs mb-2" style="color:var(--muted);letter-spacing:.5px">TOTAL REVENUE</div>
+        <div id="kpi-revenue" class="text-2xl font-bold text-white">—</div>
+        <div class="text-xs mt-1" style="color:var(--muted)">All time</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs mb-2" style="color:var(--muted);letter-spacing:.5px">ACTIVE PROJECTS</div>
+        <div id="kpi-projects" class="text-2xl font-bold text-white">—</div>
+        <div class="text-xs mt-1" style="color:var(--muted)">In progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs mb-2" style="color:var(--muted);letter-spacing:.5px">OPEN LEADS</div>
+        <div id="kpi-leads" class="text-2xl font-bold text-white">—</div>
+        <div class="text-xs mt-1" style="color:var(--muted)">Unqualified</div>
+      </div>
+    </div>
+
+    <!-- Bottom grid -->
+    <div class="grid grid-cols-2 gap-6">
+      <!-- Recent Messages -->
+      <div class="card p-0 overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border)">
+          <div class="font-semibold text-sm text-white">Recent Messages</div>
+          <button class="text-xs" style="color:var(--accent)" onclick="navigate('comms')">View all →</button>
+        </div>
+        <div id="dash-messages" class="divide-y" style="border-color:var(--border)"></div>
+      </div>
+      <!-- Recent Projects -->
+      <div class="card p-0 overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4" style="border-bottom:1px solid var(--border)">
+          <div class="font-semibold text-sm text-white">Active Projects</div>
+          <button class="text-xs" style="color:var(--accent)" onclick="navigate('projects')">View all →</button>
+        </div>
+        <div id="dash-projects" class="divide-y" style="border-color:var(--border)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── COMM HUB PAGE ──── -->
+  <div id="page-comms" class="page animate-in">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Communication Hub</h1>
+        <div class="text-sm mt-0.5" style="color:var(--muted)">Unified inbox — Gmail & WhatsApp</div>
+      </div>
+      <button class="btn-primary" id="sync-btn">↻ Sync Now</button>
+    </div>
+
+    <div class="flex gap-2 mb-5">
+      <div class="tab active" data-filter="all">All</div>
+      <div class="tab" data-filter="gmail">📧 Gmail</div>
+      <div class="tab" data-filter="whatsapp">💬 WhatsApp</div>
+    </div>
+
+    <div class="grid gap-4" style="grid-template-columns:2fr 3fr">
+      <!-- Message List -->
+      <div class="card p-0 overflow-hidden" style="max-height:580px;overflow-y:auto">
+        <div id="message-list"></div>
+      </div>
+      <!-- Message Preview -->
+      <div class="card p-6" id="message-preview" style="min-height:200px">
+        <div class="flex flex-col items-center justify-center h-full" style="color:var(--muted)">
+          <div class="text-3xl mb-3">📨</div>
+          <div class="text-sm">Select a message to preview</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── PROJECTS PAGE ──── -->
+  <div id="page-projects" class="page animate-in">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Client Projects</h1>
+        <div class="text-sm mt-0.5" style="color:var(--muted)">Track all client engagements and status.</div>
+      </div>
+      <button class="btn-primary" onclick="openModal('project')">+ New Project</button>
+    </div>
+
+    <div class="card p-0 overflow-hidden">
+      <div class="table-row table-header px-5 py-3" style="grid-template-columns:2fr 2fr 1.2fr 1.5fr 1fr">
+        <span>CLIENT</span><span>PROJECT</span><span>STATUS</span><span>ASSIGNED TO</span><span>BUDGET</span>
+      </div>
+      <div id="projects-table"></div>
+    </div>
+  </div>
+
+  <!-- ──── LEADS PAGE ──── -->
+  <div id="page-leads" class="page animate-in">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Leads</h1>
+        <div class="text-sm mt-0.5" style="color:var(--muted)">Track inbound leads from all channels.</div>
+      </div>
+      <button class="btn-primary" onclick="openModal('lead')">+ Add Lead</button>
+    </div>
+
+    <div class="card p-0 overflow-hidden">
+      <div class="table-row table-header px-5 py-3" style="grid-template-columns:2fr 2fr 1fr 1.2fr 1.5fr">
+        <span>NAME</span><span>EMAIL</span><span>SOURCE</span><span>STATUS</span><span>CREATED</span>
+      </div>
+      <div id="leads-table"></div>
+    </div>
+  </div>
+
+  <!-- ──── EMPLOYEES PAGE ──── -->
+  <div id="page-employees" class="page animate-in">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Team Directory</h1>
+        <div class="text-sm mt-0.5" style="color:var(--muted)">Monitor capacity and workload across the team.</div>
+      </div>
+      <button class="btn-primary" onclick="openModal('employee')">+ Add Member</button>
+    </div>
+
+    <div class="grid gap-4" id="employees-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))"></div>
+  </div>
+
+  <!-- ──── FINANCES PAGE ──── -->
+  <div id="page-finances" class="page animate-in">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Finance Ledger</h1>
+        <div class="text-sm mt-0.5" style="color:var(--muted)">Revenue vs outbound costs — all in one place.</div>
+      </div>
+      <button class="btn-primary" onclick="openModal('finance')">+ Add Entry</button>
+    </div>
+
+    <!-- Finance Summary -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="stat-card">
+        <div class="text-xs mb-1" style="color:var(--muted)">TOTAL REVENUE</div>
+        <div id="fin-revenue" class="text-xl font-bold" style="color:var(--accent2)">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs mb-1" style="color:var(--muted)">TOTAL COSTS</div>
+        <div id="fin-costs" class="text-xl font-bold" style="color:#f87171">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs mb-1" style="color:var(--muted)">NET PROFIT</div>
+        <div id="fin-profit" class="text-xl font-bold text-white">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-xs mb-1" style="color:var(--muted)">MARGIN</div>
+        <div id="fin-margin" class="text-xl font-bold" style="color:var(--accent)">—</div>
+      </div>
+    </div>
+
+    <div class="card p-0 overflow-hidden">
+      <div class="table-row table-header px-5 py-3" style="grid-template-columns:2fr 1fr 1.5fr 2fr 1fr 0.5fr">
+        <span>CLIENT</span><span>TYPE</span><span>AMOUNT</span><span>DESCRIPTION</span><span>DATE</span><span></span>
+      </div>
+      <div id="finance-table"></div>
+    </div>
+  </div>
+
+  <!-- ──── SETTINGS PAGE ──── -->
+  <div id="page-settings" class="page animate-in">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-white">Settings</h1>
+      <div class="text-sm mt-0.5" style="color:var(--muted)">Configure integrations, sync preferences, and field customization.</div>
+    </div>
+
+    <div class="grid gap-6" style="grid-template-columns:1fr 1fr">
+      <!-- Integrations -->
+      <div class="card p-6">
+        <h3 class="font-bold text-white mb-4">🔗 Integrations</h3>
+        <div class="flex flex-col gap-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium text-white">WhatsApp Sync</div>
+              <div class="text-xs mt-0.5" style="color:var(--muted)">Sync messages via Meta Business API</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="toggle-whatsapp" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div style="border-top:1px solid var(--border)"></div>
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm font-medium text-white">Gmail Sync</div>
+              <div class="text-xs mt-0.5" style="color:var(--muted)">Connect via Google OAuth2</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="toggle-gmail" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div style="border-top:1px solid var(--border)"></div>
+          <div>
+            <label>Sync Interval (minutes)</label>
+            <input type="number" id="setting-interval" value="5" min="1" max="60" style="max-width:100px" />
+          </div>
+        </div>
+        <button class="btn-primary mt-5 w-full" id="save-settings-btn">Save Integration Settings</button>
+      </div>
+
+      <!-- Agency Info -->
+      <div class="card p-6">
+        <h3 class="font-bold text-white mb-4">🏢 Agency Profile</h3>
+        <div class="flex flex-col gap-4">
+          <div>
+            <label>Agency Name</label>
+            <input type="text" id="setting-agency-name" value="Apex Digital Agency" />
+          </div>
+          <div>
+            <label>Primary Color</label>
+            <input type="text" value="#6c63ff" placeholder="#6c63ff" />
+          </div>
+          <div>
+            <label>Default Currency</label>
+            <select>
+              <option>USD ($)</option>
+              <option>EUR (€)</option>
+              <option>GBP (£)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary mt-5 w-full">Save Agency Profile</button>
+      </div>
+
+      <!-- Dynamic Fields Config -->
+      <div class="card p-6" style="grid-column:span 2">
+        <h3 class="font-bold text-white mb-1">⚙️ Dynamic Field Configuration</h3>
+        <div class="text-sm mb-4" style="color:var(--muted)">Customize which fields appear in each section. Add new fields without touching the HTML.</div>
+        <div class="flex gap-2 mb-4">
+          <div class="tab active" data-fields-tab="leads">Leads</div>
+          <div class="tab" data-fields-tab="projects">Projects</div>
+          <div class="tab" data-fields-tab="employees">Employees</div>
+          <div class="tab" data-fields-tab="finances">Finances</div>
+        </div>
+        <div id="fields-editor" class="flex flex-col gap-2"></div>
+        <button class="btn-ghost mt-4 text-sm">+ Add Custom Field</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════ MODAL ══ -->
+<div id="modal" class="modal-backdrop">
+  <div class="modal" id="modal-content">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-lg font-bold text-white" id="modal-title">Add Record</h2>
+      <button onclick="closeModal()" style="color:var(--muted);font-size:20px;cursor:pointer;background:none;border:none">✕</button>
+    </div>
+    <div id="modal-fields" class="flex flex-col gap-4"></div>
+    <div class="flex gap-3 mt-6">
+      <button class="btn-primary flex-1" id="modal-save">Save</button>
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION TOAST -->
+<div id="toast" class="notification"></div>
+
+<!-- ═══════════════════════════════════════════ JS ══ -->
+<script>
+const $ = id => document.getElementById(id);
+const fmt = n => '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:0});
+let state = { messages: [], fields: {}, currentFilter: 'all', currentFieldsTab: 'leads' };
+
+// ── Navigation ──
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  $('page-' + page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+  if (page === 'dashboard')  loadDashboard();
+  if (page === 'comms')      loadMessages();
+  if (page === 'projects')   loadProjects();
+  if (page === 'leads')      loadLeads();
+  if (page === 'employees')  loadEmployees();
+  if (page === 'finances')   loadFinances();
+  if (page === 'settings')   loadSettings();
+}
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => navigate(el.dataset.page));
+});
+
+// ── Toast ──
+function toast(msg, ok=true) {
+  const t = $('toast');
+  t.textContent = (ok ? '✓ ' : '✗ ') + msg;
+  t.style.borderColor = ok ? 'var(--accent2)' : 'var(--danger)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── API helpers ──
+const api = {
+  get: url => fetch(url).then(r => r.json()),
+  post: (url,d) => fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.json()),
+  put:  (url,d) => fetch(url,{method:'PUT', headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.json()),
+  del:  url     => fetch(url,{method:'DELETE'}).then(r=>r.json()),
+};
+
+// ── Status badge ──
+function badge(status) {
+  const cls = {
+    Active:'active', Pending:'pending', Completed:'completed',
+    New:'new', Qualified:'qualified', Closed:'closed',
+    revenue:'revenue', ad_spend:'ad_spend', payroll:'payroll', tool:'tool',
+  }[status] || 'pending';
+  return `<span class="badge badge-${cls}">${status}</span>`;
+}
+
+// ── Load Dashboard ──
+async function loadDashboard() {
+  const [d, msgs, projs] = await Promise.all([
+    api.get('/api/dashboard'),
+    api.get('/api/messages'),
+    api.get('/api/projects'),
+  ]);
+  $('kpi-profit').textContent  = fmt(d.net_profit);
+  $('kpi-revenue').textContent = fmt(d.total_revenue);
+  $('kpi-projects').textContent = d.active_projects;
+  $('kpi-leads').textContent   = d.open_leads;
+
+  if (d.unread_messages > 0) {
+    $('unread-badge').textContent = d.unread_messages;
+    $('unread-badge').classList.remove('hidden');
+  }
+
+  $('dash-messages').innerHTML = msgs.slice(0,4).map(m => `
+    <div class="px-5 py-3 flex items-start gap-3 cursor-pointer hover:opacity-80 transition" style="border-bottom:1px solid var(--border)">
+      <span class="text-lg">${m.source==='gmail'?'📧':'💬'}</span>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-white truncate">${m.sender}</div>
+        <div class="text-xs truncate" style="color:var(--muted)">${m.preview}</div>
+      </div>
+      <div class="text-xs flex-shrink-0" style="color:var(--muted)">${m.timestamp}</div>
+    </div>
+  `).join('');
+
+  $('dash-projects').innerHTML = projs.filter(p=>p.status==='Active').slice(0,4).map(p => `
+    <div class="px-5 py-3" style="border-bottom:1px solid var(--border)">
+      <div class="flex justify-between items-start">
+        <div>
+          <div class="text-sm font-medium text-white">${p.client_name}</div>
+          <div class="text-xs" style="color:var(--muted)">${p.project_name}</div>
+        </div>
+        ${badge(p.status)}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Load Messages ──
+async function loadMessages() {
+  state.messages = await api.get('/api/messages');
+  renderMessages();
+}
+function renderMessages() {
+  const msgs = state.currentFilter === 'all'
+    ? state.messages
+    : state.messages.filter(m => m.source === state.currentFilter);
+
+  $('message-list').innerHTML = msgs.map(m => `
+    <div class="msg-item ${m.is_read?'':'unread'}" onclick="showMessage(${m.id})">
+      <div class="flex items-center gap-2 mb-1">
+        <span>${m.source==='gmail'?'📧':'💬'}</span>
+        <span class="text-sm font-medium text-white">${m.sender}</span>
+        <span class="ml-auto text-xs" style="color:var(--muted)">${m.timestamp}</span>
+      </div>
+      <div class="text-xs truncate" style="color:var(--muted);padding-left:20px">${m.preview}</div>
+    </div>
+  `).join('') || '<div class="p-6 text-center text-sm" style="color:var(--muted)">No messages</div>';
+}
+async function showMessage(id) {
+  const m = state.messages.find(x=>x.id===id);
+  if (!m) return;
+  if (!m.is_read) { await api.put(`/api/messages/${id}/read`,{}); m.is_read = true; renderMessages(); }
+  $('message-preview').innerHTML = `
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-2xl">${m.source==='gmail'?'📧':'💬'}</span>
+      <div>
+        <div class="font-semibold text-white">${m.sender}</div>
+        <div class="text-xs" style="color:var(--muted)">${m.timestamp} · via ${m.source}</div>
+      </div>
+    </div>
+    <div class="p-4 rounded-lg text-sm leading-relaxed" style="background:var(--ink3);color:#cbd5e1">${m.full_body}</div>
+    <div class="flex gap-2 mt-4">
+      <button class="btn-primary text-sm">↩ Reply</button>
+      <button class="btn-ghost text-sm">Forward</button>
+    </div>
+  `;
+}
+document.querySelectorAll('[data-filter]').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    state.currentFilter = el.dataset.filter;
+    renderMessages();
+  });
+});
+$('sync-btn').addEventListener('click', async () => {
+  toast('Sync triggered for all active channels…');
+  await api.post('/api/sync/gmail',{});
+  await api.post('/api/sync/whatsapp',{});
+});
+
+// ── Load Projects ──
+async function loadProjects() {
+  const data = await api.get('/api/projects');
+  $('projects-table').innerHTML = data.map(p => `
+    <div class="table-row px-5 py-3.5 items-center" style="grid-template-columns:2fr 2fr 1.2fr 1.5fr 1fr">
+      <div class="font-medium text-white">${p.client_name}</div>
+      <div class="text-sm" style="color:var(--muted)">${p.project_name}</div>
+      <div>${badge(p.status)}</div>
+      <div class="text-sm">${p.assigned_to}</div>
+      <div class="text-sm font-medium" style="color:var(--accent2)">${fmt(p.budget)}</div>
+    </div>
+  `).join('') || '<div class="p-8 text-center text-sm" style="color:var(--muted)">No projects yet.</div>';
+}
+
+// ── Load Leads ──
+async function loadLeads() {
+  const data = await api.get('/api/leads');
+  $('leads-table').innerHTML = data.map(l => `
+    <div class="table-row px-5 py-3.5 items-center" style="grid-template-columns:2fr 2fr 1fr 1.2fr 1.5fr">
+      <div class="font-medium text-white">${l.name}</div>
+      <div class="text-sm" style="color:var(--muted)">${l.email||'—'}</div>
+      <div class="text-sm capitalize">${l.source}</div>
+      <div>${badge(l.status)}</div>
+      <div class="text-sm" style="color:var(--muted)">${l.created_at}</div>
+    </div>
+  `).join('') || '<div class="p-8 text-center text-sm" style="color:var(--muted)">No leads yet.</div>';
+}
+
+// ── Load Employees ──
+async function loadEmployees() {
+  const data = await api.get('/api/employees');
+  $('employees-grid').innerHTML = data.map(e => {
+    const capClass = e.current_load >= 80 ? 'capacity-high' : e.current_load >= 50 ? 'capacity-medium' : 'capacity-low';
+    return `
+    <div class="card p-5">
+      <div class="flex items-start gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl" style="background:var(--ink3)">${e.avatar}</div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-white">${e.name}</div>
+          <div class="text-xs" style="color:var(--muted)">${e.role}</div>
+        </div>
+        <div class="text-xs px-2 py-1 rounded" style="background:var(--ink3);color:var(--accent2)">${fmt(e.hourly_rate)}/hr</div>
+      </div>
+      <div class="mb-1 flex justify-between">
+        <span class="text-xs" style="color:var(--muted)">Capacity</span>
+        <span class="text-xs font-semibold" style="color:${e.current_load>=80?'#f87171':e.current_load>=50?'#fbbf24':'#34d399'}">${e.current_load}%</span>
+      </div>
+      <div class="progress-bar h-2">
+        <div class="progress-fill ${capClass}" style="width:${e.current_load}%"></div>
+      </div>
+      <div class="mt-3 text-xs" style="color:var(--muted)">${e.email}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Load Finances ──
+async function loadFinances() {
+  const data = await api.get('/api/finances');
+  const s = data.summary;
+  $('fin-revenue').textContent = fmt(s.total_revenue);
+  $('fin-costs').textContent   = fmt(s.total_costs);
+  $('fin-profit').textContent  = fmt(s.net_profit);
+  $('fin-margin').textContent  = s.margin_pct + '%';
+
+  $('finance-table').innerHTML = data.records.map(f => `
+    <div class="table-row px-5 py-3.5 items-center" style="grid-template-columns:2fr 1fr 1.5fr 2fr 1fr 0.5fr">
+      <div class="font-medium text-white">${f.client_name||'—'}</div>
+      <div>${badge(f.type)}</div>
+      <div class="font-semibold ${f.type==='revenue'?'':'text-red-400'}" style="color:${f.type==='revenue'?'var(--accent2)':''}">
+        ${f.type==='revenue'?'+':'−'}${fmt(f.amount)}
+      </div>
+      <div class="text-sm" style="color:var(--muted)">${f.description}</div>
+      <div class="text-sm" style="color:var(--muted)">${f.date}</div>
+      <div>
+        <button class="text-xs" style="color:var(--danger)" onclick="deleteFinance(${f.id})">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+async function deleteFinance(id) {
+  await api.del('/api/finances/'+id);
+  toast('Entry deleted');
+  loadFinances();
+}
+
+// ── Load Settings ──
+async function loadSettings() {
+  const s = await api.get('/api/settings');
+  $('toggle-whatsapp').checked = s.whatsapp_sync === 'true';
+  $('toggle-gmail').checked    = s.gmail_sync    === 'true';
+  $('setting-interval').value  = s.sync_interval || 5;
+  $('setting-agency-name').value = s.agency_name || '';
+  loadFieldsEditor('leads');
+}
+$('save-settings-btn').addEventListener('click', async () => {
+  await api.post('/api/settings', {
+    whatsapp_sync: $('toggle-whatsapp').checked ? 'true' : 'false',
+    gmail_sync:    $('toggle-gmail').checked    ? 'true' : 'false',
+    sync_interval: $('setting-interval').value,
+    agency_name:   $('setting-agency-name').value,
+  });
+  toast('Settings saved!');
+});
+
+// ── Fields Editor ──
+async function loadFieldsEditor(tab) {
+  if (!Object.keys(state.fields).length) {
+    state.fields = await api.get('/api/fields.json');
+  }
+  state.currentFieldsTab = tab;
+  document.querySelectorAll('[data-fields-tab]').forEach(t => {
+    t.classList.toggle('active', t.dataset.fieldsTab === tab);
+  });
+  const fields = state.fields[tab] || [];
+  $('fields-editor').innerHTML = fields.map((f,i) => `
+    <div class="card2 p-3 flex items-center gap-3">
+      <div class="text-sm font-medium text-white flex-1">${f.label}</div>
+      <div class="text-xs px-2 py-0.5 rounded" style="background:var(--ink3);color:var(--muted)">${f.type}</div>
+      <div class="text-xs px-2 py-0.5 rounded" style="background:var(--ink3);color:var(--muted)">${f.group}</div>
+      ${f.required ? '<span class="text-xs" style="color:var(--accent2)">required</span>' : '<span class="text-xs" style="color:var(--muted)">optional</span>'}
+    </div>
+  `).join('');
+}
+document.querySelectorAll('[data-fields-tab]').forEach(el => {
+  el.addEventListener('click', () => loadFieldsEditor(el.dataset.fieldsTab));
+});
+
+// ── Modal ──
+let modalType = '';
+async function openModal(type) {
+  modalType = type;
+  if (!Object.keys(state.fields).length) {
+    state.fields = await api.get('/api/fields.json');
+  }
+  const titles = {lead:'Add Lead',project:'New Project',employee:'Add Team Member',finance:'Add Finance Entry'};
+  const fieldKey = type === 'lead' ? 'leads' : type === 'project' ? 'projects' : type === 'employee' ? 'employees' : 'finances';
+  $('modal-title').textContent = titles[type];
+  const fields = (state.fields[fieldKey] || []).filter(f => ['core','financial'].includes(f.group));
+  $('modal-fields').innerHTML = fields.map(f => {
+    if (f.type === 'select') {
+      return `<div><label>${f.label}${f.required?' *':''}</label>
+        <select data-key="${f.key}">
+          ${(f.options||[]).map(o=>`<option>${o}</option>`).join('')}
+        </select></div>`;
+    }
+    return `<div><label>${f.label}${f.required?' *':''}</label>
+      <input type="${f.type||'text'}" data-key="${f.key}" placeholder="${f.label}" /></div>`;
+  }).join('');
+  $('modal').classList.add('open');
+}
+function closeModal() {
+  $('modal').classList.remove('open');
+}
+$('modal-save').addEventListener('click', async () => {
+  const data = {};
+  $('modal-fields').querySelectorAll('[data-key]').forEach(el => {
+    data[el.dataset.key] = el.value;
+  });
+  const endpoints = {lead:'/api/leads',project:'/api/projects',employee:'/api/employees',finance:'/api/finances'};
+  const res = await api.post(endpoints[modalType], data);
+  closeModal();
+  toast('Record saved!');
+  if (modalType==='lead')     loadLeads();
+  if (modalType==='project')  loadProjects();
+  if (modalType==='employee') loadEmployees();
+  if (modalType==='finance')  loadFinances();
+});
+$('modal').addEventListener('click', e => { if(e.target===$('modal')) closeModal(); });
+
+// ── Init ──
+loadDashboard();
+</script>
+</body>
+</html>
